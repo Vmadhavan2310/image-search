@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState,createRef } from 'react'
 
 const access_key = process.env.REACT_APP_UNSPLASH_CLIENT_KEY;
 
 export default function ImageLoader({search}) {
     const [imgArr,setImgArr] = useState([]);
     const page = useRef(1);
+    const lastElem = useRef(null);
     
     const getPhotos = async () => {
         const params = new URL(window.location.href);
@@ -15,9 +16,11 @@ export default function ImageLoader({search}) {
         const data = await res.json();
         if(data.results) {
             page.current == 1 ? setImgArr(data.results) : setImgArr([...imgArr,...data.results]);
+            historyUpdate(search);
             return;
         }
         setImgArr([...imgArr,...data]);
+        historyUpdate(search);
     }
 
     const historyUpdate = (search_key) => {
@@ -31,16 +34,16 @@ export default function ImageLoader({search}) {
     useEffect(()=>{
         async function fetchData() {
             await getPhotos();
-            historyUpdate(search);
         }
-        fetchData()
+        fetchData();
+       
     },[search])
   return (
     <>
       <div className='row'>
-    {imgArr.map(image => {
+    {imgArr.map((image,index) => {
         return (
-                <div className='column' key={image.id}>
+                <div className={index == imgArr.length-1 ? 'column last' : 'column'} key={image.id} ref={index == imgArr.length-1 ? lastElem :null}>
                     <img src={image.urls.regular} alt={image.alt_description} />
                 </div>
         )
