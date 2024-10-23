@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState,createRef } from 'react'
+import Masonry, {ResponsiveMasonry} from "react-responsive-masonry";
 
 const access_key = process.env.REACT_APP_UNSPLASH_CLIENT_KEY;
 
@@ -40,14 +41,14 @@ export default function ImageLoader({search}) {
     },[search])
   return (
     <>
-      <div className='row'>
+      <div className='img-container'>
+          <Masonry columnsCount={3} gutter="10px">
     {imgArr.map((image,index) => {
         return (
-                <div className={index == imgArr.length-1 ? 'column last' : 'column'} key={image.id} ref={index == imgArr.length-1 ? lastElem :null}>
-                    <img src={image.urls.regular} alt={image.alt_description} />
-                </div>
-        )
-    })}
+                <img src={image.urls.regular} alt={image.alt_description} style={{width: "100%", display: "block"}} key={index}/>
+                )
+            })}
+            </Masonry>
     </div>
     {search && <button className="button-76" role="button" onClick={handlePage}>View More</button>}  
     </>
